@@ -1,4 +1,4 @@
-import { ChatRequest, ChatResponse, ModelProvider } from "./types";
+import { ChatRequest, ChatResponse, ModelProvider, ProviderError } from "./types";
 import { Logger } from "../observability/logger";
 import { Metrics } from "../observability/metrics";
 
@@ -15,7 +15,24 @@ export interface RouteOptions {
   sensitive?: boolean;
 }
 
-/** Picks the provider/model for each request, with fallback on failure. */
+export interface RetryPolicy {
+  /** Extra attempts on the same provider for retryable errors (429, 5xx, network). Default 2. */
+  maxRetries: number;
+  /** First back-off delay; doubles each retry, with jitter. Default 500 ms. */
+  baseDelayMs: number;
+  /** Upper bound for one delay. Default 8000 ms. */
+  maxDelayMs: number;
+}
+
+export const DEFAULT_RETRY: RetryPolicy = { maxRetries: 2, baseDelayMs: 500, maxDelayMs: 8_000 };
+
+const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+
+function isRetryable(err: unknown): boolean {
+  return err instanceof ProviderError ? err.retryable : false;
+}
+
+/** Picks the provider/model for each request, retries transient errors, then falls back to the next provider. */
 export class ModelRouter {
   private readonly providers = new Map<string, ModelProvider>();
   private readonly rules: RouteRule[] = [];
@@ -26,6 +43,7 @@ export class ModelRouter {
   constructor(
     private readonly logger: Logger = new Logger("router"),
     readonly metrics: Metrics = new Metrics(),
+    private readonly retry: RetryPolicy = DEFAULT_RETRY,
   ) {}
 
   register(provider: ModelProvider, opts: { isDefault?: boolean; isLocal?: boolean } = {}): this {
@@ -77,16 +95,24 @@ export class ModelRouter {
     let lastError: unknown;
     for (const c of candidates) {
       const provider = this.providers.get(c.provider)!;
-      const started = Date.now();
-      try {
-        const res = await provider.chat({ ...req, model: req.model ?? c.model });
-        this.metrics.record(provider.name, res.usage, Date.now() - started, true);
-        this.logger.debug("model call ok", { provider: provider.name, model: res.model, ms: Date.now() - started });
-        return res;
-      } catch (err) {
-        lastError = err;
-        this.metrics.record(provider.name, { inputTokens: 0, outputTokens: 0 }, Date.now() - started, false);
-        this.logger.warn("model call failed, trying next provider", { provider: provider.name, error: String(err) });
+      for (let attempt = 0; attempt <= this.retry.maxRetries; attempt++) {
+        const started = Date.now();
+        try {
+          const res = await provider.chat({ ...req, model: req.model ?? c.model });
+          this.metrics.record(provider.name, res.usage, Date.now() - started, true);
+          this.logger.debug("model call ok", { provider: provider.name, model: res.model, ms: Date.now() - started });
+          return res;
+        } catch (err) {
+          lastError = err;
+          this.metrics.record(provider.name, { inputTokens: 0, outputTokens: 0 }, Date.now() - started, false);
+          if (!isRetryable(err) || attempt === this.retry.maxRetries) {
+            this.logger.warn("model call failed, trying next provider", { provider: provider.name, error: String(err) });
+            break;
+          }
+          const delay = Math.min(this.retry.maxDelayMs, this.retry.baseDelayMs * 2 ** attempt);
+          this.logger.info("retrying model call", { provider: provider.name, attempt: attempt + 1, delayMs: delay });
+          await sleep(delay / 2 + Math.random() * (delay / 2));
+        }
       }
     }
     throw lastError instanceof Error ? lastError : new Error(String(lastError));

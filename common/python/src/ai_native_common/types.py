@@ -65,3 +65,8 @@ class ProviderError(Exception):
         super().__init__(f"[{provider}] {message}")
         self.provider = provider
         self.status = status
+
+    @property
+    def retryable(self) -> bool:
+        """Network errors, timeouts, 408, 429 and 5xx are worth retrying; other 4xx (bad key, bad request) are not."""
+        return self.status is None or self.status in (408, 429) or self.status >= 500

@@ -1,6 +1,6 @@
 {
   "name": "@ai-native/common",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Reusable AI platform building blocks: model providers, router, agent runtime, tools, guardrails, audit log.",
   "license": "MIT",
   "author": "gauravgupta0612",

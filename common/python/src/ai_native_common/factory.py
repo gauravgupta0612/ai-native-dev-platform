@@ -6,12 +6,12 @@ from typing import Optional
 from .config import PlatformConfig
 from .observability import Logger
 from .providers import AnthropicProvider, EchoProvider, GeminiProvider, OpenAICompatibleProvider
-from .router import ModelRouter
+from .router import ModelRouter, RetryPolicy
 
 
 def create_router(cfg: PlatformConfig, logger: Optional[Logger] = None) -> ModelRouter:
     logger = logger or Logger("platform")
-    router = ModelRouter(logger.child("router"))
+    router = ModelRouter(logger.child("router"), retry=RetryPolicy(max_retries=cfg.max_retries))
     if cfg.anthropic.api_key:
         router.register(AnthropicProvider(cfg.anthropic.api_key, cfg.anthropic.model, cfg.anthropic.base_url))
     if cfg.openai.api_key:

@@ -10,6 +10,7 @@ export interface PlatformConfig {
   custom: { baseUrl?: string; apiKey?: string; model: string };
   auditLogPath?: string;
   maxAgentSteps: number;
+  maxRetries: number;
 }
 
 /** Parses KEY=VALUE lines. Existing environment variables win over the file. */
@@ -56,5 +57,11 @@ export function loadConfig(env: Record<string, string | undefined> = process.env
     custom: { baseUrl: v("CUSTOM_API_URL"), apiKey: v("CUSTOM_API_KEY"), model: v("CUSTOM_MODEL") ?? "default" },
     auditLogPath: v("AUDIT_LOG_PATH"),
     maxAgentSteps: Number(v("MAX_AGENT_STEPS") ?? 8),
+    maxRetries: Number(v("MAX_RETRIES") ?? 2),
   };
+}
+
+/** Copy of the config that is safe to print or log: every apiKey is replaced by "xxxx". */
+export function redactConfig(cfg: PlatformConfig): PlatformConfig {
+  return JSON.parse(JSON.stringify(cfg, (k, v) => (k === "apiKey" && v ? "xxxx" : v)));
 }

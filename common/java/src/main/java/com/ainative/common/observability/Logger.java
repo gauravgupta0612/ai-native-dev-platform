@@ -1,13 +1,14 @@
 package com.ainative.common.observability;
 
 import com.ainative.common.json.Json;
+import com.ainative.common.security.PolicyGuardrails;
 
 import java.time.Instant;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.function.Consumer;
 
-/** Structured JSON-line logger. Level from LOG_LEVEL env (default INFO). */
+/** Structured JSON-line logger. Level from LOG_LEVEL env (default INFO). Every line passes through secret redaction. */
 public class Logger {
     public enum Level { DEBUG, INFO, WARN, ERROR }
 
@@ -51,6 +52,6 @@ public class Logger {
         line.put("component", component);
         line.put("msg", msg);
         if (data != null) line.putAll(data);
-        sink.accept(Json.stringify(line));
+        sink.accept(PolicyGuardrails.redactSecrets(Json.stringify(line), false));
     }
 }

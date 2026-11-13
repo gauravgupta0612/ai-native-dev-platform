@@ -6,7 +6,7 @@ import com.ainative.common.observability.Metrics;
 
 import java.util.*;
 
-/** Picks the provider/model for each request, with automatic fallback on failure. */
+/** Picks the provider/model for each request, retries transient errors, then falls back to the next provider. */
 public class ModelRouter {
     /** A routing candidate. */
     public record Candidate(String provider, String model) {}
@@ -18,12 +18,16 @@ public class ModelRouter {
     private String localProvider;
     private final Logger logger;
     private final Metrics metrics;
+    private final RetryPolicy retry;
 
-    public ModelRouter() { this(new Logger("router"), new Metrics()); }
+    public ModelRouter() { this(new Logger("router"), new Metrics(), RetryPolicy.DEFAULT); }
 
-    public ModelRouter(Logger logger, Metrics metrics) {
+    public ModelRouter(RetryPolicy retry) { this(new Logger("router"), new Metrics(), retry); }
+
+    public ModelRouter(Logger logger, Metrics metrics, RetryPolicy retry) {
         this.logger = logger;
         this.metrics = metrics;
+        this.retry = retry;
     }
 
     public ModelRouter register(ModelProvider p) { return register(p, false, false); }
@@ -77,18 +81,36 @@ public class ModelRouter {
         RuntimeException last = null;
         for (Candidate c : candidates) {
             ModelProvider p = providers.get(c.provider());
-            long started = System.currentTimeMillis();
-            try {
-                ChatResponse res = p.chat(req.model() == null && c.model() != null ? req.withModel(c.model()) : req);
-                metrics.record(p.name(), res.usage(), System.currentTimeMillis() - started, true);
-                logger.debug("model call ok", Map.of("provider", p.name(), "model", res.model()));
-                return res;
-            } catch (RuntimeException e) {
-                last = e;
-                metrics.record(p.name(), Usage.ZERO, System.currentTimeMillis() - started, false);
-                logger.warn("model call failed, trying next provider", Map.of("provider", p.name(), "error", String.valueOf(e.getMessage())));
+            for (int attempt = 0; attempt <= retry.maxRetries(); attempt++) {
+                long started = System.currentTimeMillis();
+                try {
+                    ChatResponse res = p.chat(req.model() == null && c.model() != null ? req.withModel(c.model()) : req);
+                    metrics.record(p.name(), res.usage(), System.currentTimeMillis() - started, true);
+                    logger.debug("model call ok", Map.of("provider", p.name(), "model", res.model()));
+                    return res;
+                } catch (RuntimeException e) {
+                    last = e;
+                    metrics.record(p.name(), Usage.ZERO, System.currentTimeMillis() - started, false);
+                    boolean retryable = e instanceof ProviderException pe && pe.retryable();
+                    if (!retryable || attempt == retry.maxRetries()) {
+                        logger.warn("model call failed, trying next provider", Map.of("provider", p.name(), "error", String.valueOf(e.getMessage())));
+                        break;
+                    }
+                    long delay = Math.min(retry.maxDelay().toMillis(), retry.baseDelay().toMillis() << attempt);
+                    logger.info("retrying model call", Map.of("provider", p.name(), "attempt", attempt + 1, "delayMs", delay));
+                    sleep(delay / 2 + (long) (Math.random() * (delay / 2.0)));
+                }
             }
         }
         throw last;
+    }
+
+    private static void sleep(long ms) {
+        if (ms <= 0) return;
+        try {
+            Thread.sleep(ms);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
     }
 }

@@ -18,5 +18,10 @@ public class ProviderException extends RuntimeException {
     }
 
     public String provider() { return provider; }
+
+    /** HTTP status; -1 = network error/timeout, 0 = refused locally (e.g. insecure URL). */
     public int status() { return status; }
+
+    /** Network errors, timeouts, 408, 429 and 5xx are worth retrying; other 4xx and local refusals are not. */
+    public boolean retryable() { return status == -1 || status == 408 || status == 429 || status >= 500; }
 }

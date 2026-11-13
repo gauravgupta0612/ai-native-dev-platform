@@ -1,9 +1,14 @@
+import { redactSecrets } from "../security/guardrails";
+
 export type LogLevel = "debug" | "info" | "warn" | "error";
 const ORDER: Record<LogLevel, number> = { debug: 10, info: 20, warn: 30, error: 40 };
 
 export type LogSink = (line: string) => void;
 
-/** Structured JSON-line logger. Level from LOG_LEVEL env (default "info"). */
+/**
+ * Structured JSON-line logger. Level from LOG_LEVEL env (default "info").
+ * Every line passes through redactSecrets(), so API keys and tokens never reach the logs.
+ */
 export class Logger {
   static sink: LogSink = (line) => console.error(line);
   private readonly level: LogLevel;
@@ -24,6 +29,7 @@ export class Logger {
 
   private log(level: LogLevel, msg: string, data?: Record<string, unknown>) {
     if (ORDER[level] < ORDER[this.level]) return;
-    Logger.sink(JSON.stringify({ ts: new Date().toISOString(), level, component: this.component, msg, ...data }));
+    const line = JSON.stringify({ ts: new Date().toISOString(), level, component: this.component, msg, ...data });
+    Logger.sink(redactSecrets(line, false));
   }
 }

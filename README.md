@@ -26,7 +26,7 @@ Developer → `apps/desktop-ide` → `core/` → `ai-orchestration/`
 
 ## Common library (TypeScript · Java · Python)
 
-`common/` contains reusable code for any project: model providers (OpenAI, Claude, Gemini, Ollama, custom), a model router with fallback, a context manager, a tool registry, an agent runtime, guardrails, an audit log and metrics. The same design is available in all three languages. See `common/README.md`.
+`common/` contains secure, reusable AI code for any project, in TypeScript, Java and Python: model providers (OpenAI, Claude, Gemini, Ollama, custom), a router with retry and fallback, an agent runtime with budgets, validated and sandboxed tools, guardrails (secret masking, prompt-injection detection), a hash-chained audit log and metrics. Start with `common/README.md`; the security details are in `common/SECURITY.md`.
 
 ## Shared folders
 

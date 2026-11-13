@@ -16,11 +16,18 @@ public record PlatformConfig(
         Provider ollama,
         Provider custom,
         String auditLogPath,
-        int maxAgentSteps) {
+        int maxAgentSteps,
+        int maxRetries) {
 
     /** Settings for one provider. {@code enabled} is used by providers without a key (Ollama). */
     public record Provider(String apiKey, String baseUrl, String model, boolean enabled) {
         public boolean hasKey() { return apiKey != null && !apiKey.isBlank(); }
+
+        /** Never prints the key, so the config is safe to log. */
+        @Override
+        public String toString() {
+            return "Provider[apiKey=" + (hasKey() ? "xxxx" : "none") + ", baseUrl=" + baseUrl + ", model=" + model + ", enabled=" + enabled + "]";
+        }
     }
 
     /** Reads System.getenv() plus a .env file in the working directory (real env vars win). */
@@ -40,7 +47,8 @@ public record PlatformConfig(
                         "true".equalsIgnoreCase(v(env, "OLLAMA_ENABLED", "false"))),
                 new Provider(v(env, "CUSTOM_API_KEY", null), v(env, "CUSTOM_API_URL", null), v(env, "CUSTOM_MODEL", "default"), true),
                 v(env, "AUDIT_LOG_PATH", null),
-                Integer.parseInt(v(env, "MAX_AGENT_STEPS", "8")));
+                Integer.parseInt(v(env, "MAX_AGENT_STEPS", "8")),
+                Integer.parseInt(v(env, "MAX_RETRIES", "2")));
     }
 
     /** Parses KEY=VALUE lines; ignores blanks and # comments; strips matching quotes. */

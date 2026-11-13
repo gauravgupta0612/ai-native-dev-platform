@@ -1,6 +1,7 @@
 import { PlatformConfig } from "../config/config";
 import { Logger } from "../observability/logger";
-import { ModelRouter } from "./router";
+import { DEFAULT_RETRY, ModelRouter } from "./router";
+import { Metrics } from "../observability/metrics";
 import { AnthropicProvider } from "./providers/anthropic";
 import { EchoProvider } from "./providers/echo";
 import { GeminiProvider } from "./providers/gemini";
@@ -11,7 +12,7 @@ import { OpenAICompatibleProvider } from "./providers/openai-compatible";
  * The offline "echo" provider is always added last so the app still runs without keys.
  */
 export function createRouter(cfg: PlatformConfig, logger = new Logger("platform")): ModelRouter {
-  const router = new ModelRouter(logger.child("router"));
+  const router = new ModelRouter(logger.child("router"), new Metrics(), { ...DEFAULT_RETRY, maxRetries: cfg.maxRetries });
   if (cfg.anthropic.apiKey) {
     router.register(new AnthropicProvider({ apiKey: cfg.anthropic.apiKey, defaultModel: cfg.anthropic.model, baseUrl: cfg.anthropic.baseUrl }));
   }

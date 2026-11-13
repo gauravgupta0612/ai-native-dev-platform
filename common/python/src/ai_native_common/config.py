@@ -25,7 +25,7 @@ def load_dotenv(path: str = ".env", env: Optional[MutableMapping[str, str]] = No
 
 @dataclass
 class ProviderSettings:
-    api_key: Optional[str]
+    api_key: Optional[str] = field(repr=False)  # never shown by print()/logging
     base_url: Optional[str]
     model: str
     enabled: bool = True
@@ -41,7 +41,17 @@ class PlatformConfig:
     custom: ProviderSettings
     audit_log_path: Optional[str] = None
     max_agent_steps: int = 8
+    max_retries: int = 2
     extra: dict = field(default_factory=dict)
+
+    def safe_dict(self) -> dict:
+        """Copy that is safe to print or log: every api_key is replaced by "xxxx"."""
+        from dataclasses import asdict
+        data = asdict(self)
+        for value in data.values():
+            if isinstance(value, dict) and value.get("api_key"):
+                value["api_key"] = "xxxx"
+        return data
 
 
 def load_config(env: Optional[Mapping[str, str]] = None) -> PlatformConfig:
@@ -61,4 +71,5 @@ def load_config(env: Optional[Mapping[str, str]] = None) -> PlatformConfig:
         custom=ProviderSettings(v("CUSTOM_API_KEY"), v("CUSTOM_API_URL"), v("CUSTOM_MODEL", "default")),
         audit_log_path=v("AUDIT_LOG_PATH"),
         max_agent_steps=int(v("MAX_AGENT_STEPS", "8") or 8),
+        max_retries=int(v("MAX_RETRIES", "2") or 2),
     )

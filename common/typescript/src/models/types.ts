@@ -58,4 +58,9 @@ export class ProviderError extends Error {
     super(`[${provider}] ${message}`);
     this.name = "ProviderError";
   }
+
+  /** Network errors, timeouts, 408, 429 and 5xx are worth retrying; 4xx (bad key, bad request) are not. */
+  get retryable(): boolean {
+    return this.status === undefined || this.status === 408 || this.status === 429 || this.status >= 500;
+  }
 }

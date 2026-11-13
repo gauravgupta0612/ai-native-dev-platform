@@ -9,13 +9,14 @@ from dataclasses import dataclass
 from datetime import datetime, timezone
 from typing import Any, Callable, Dict
 
+from .guardrails import redact_secrets
 from .types import Usage
 
 _ORDER = {"debug": 10, "info": 20, "warn": 30, "error": 40}
 
 
 class Logger:
-    """JSON-line logger. Level from LOG_LEVEL env (default "info")."""
+    """JSON-line logger. Level from LOG_LEVEL env (default "info"). Every line is passed through redact_secrets()."""
 
     sink: Callable[[str], None] = staticmethod(lambda line: print(line, file=sys.stderr))
 
@@ -31,7 +32,7 @@ class Logger:
         if _ORDER[level] < _ORDER[self.level]:
             return
         line = {"ts": datetime.now(timezone.utc).isoformat(), "level": level, "component": self.component, "msg": msg, **data}
-        Logger.sink(json.dumps(line, default=str))
+        Logger.sink(redact_secrets(json.dumps(line, default=str), mask_emails=False))
 
     def debug(self, msg: str, **data: Any) -> None: self._log("debug", msg, **data)
     def info(self, msg: str, **data: Any) -> None: self._log("info", msg, **data)

@@ -1,11 +1,13 @@
 """Model router: picks the provider/model for each request, with fallback on failure."""
 from __future__ import annotations
 
+import random
+import time
 from dataclasses import dataclass, replace
 from typing import Dict, List, Optional, Tuple
 
 from .observability import Logger, Metrics, now_ms
-from .types import ChatRequest, ChatResponse, ModelProvider, Usage
+from .types import ChatRequest, ChatResponse, ModelProvider, ProviderError, Usage
 
 
 @dataclass
@@ -15,10 +17,21 @@ class RouteRule:
     model: Optional[str] = None
 
 
+@dataclass
+class RetryPolicy:
+    max_retries: int = 2  # extra attempts on the same provider for 429 / 5xx / network errors
+    base_delay: float = 0.5  # seconds; doubles each retry, with jitter
+    max_delay: float = 8.0
+
+
 class ModelRouter:
-    def __init__(self, logger: Optional[Logger] = None, metrics: Optional[Metrics] = None):
+    """Picks the provider/model for each request, retries transient errors, then falls back to the next provider."""
+
+    def __init__(self, logger: Optional[Logger] = None, metrics: Optional[Metrics] = None,
+                 retry: Optional[RetryPolicy] = None):
         self.logger = logger or Logger("router")
         self.metrics = metrics or Metrics()
+        self.retry = retry or RetryPolicy()
         self._providers: Dict[str, ModelProvider] = {}
         self._rules: List[RouteRule] = []
         self._default: Optional[str] = None
@@ -74,15 +87,22 @@ class ModelRouter:
         last_error: Optional[Exception] = None
         for name, model in candidates:
             provider = self._providers[name]
-            started = now_ms()
-            try:
-                res = provider.chat(replace(request, model=request.model or model))
-                self.metrics.record(name, res.usage, now_ms() - started, True)
-                self.logger.debug("model call ok", provider=name, model=res.model)
-                return res
-            except Exception as err:  # noqa: BLE001 - try the next provider
-                last_error = err
-                self.metrics.record(name, Usage(), now_ms() - started, False)
-                self.logger.warn("model call failed, trying next provider", provider=name, error=str(err))
+            for attempt in range(self.retry.max_retries + 1):
+                started = now_ms()
+                try:
+                    res = provider.chat(replace(request, model=request.model or model))
+                    self.metrics.record(name, res.usage, now_ms() - started, True)
+                    self.logger.debug("model call ok", provider=name, model=res.model)
+                    return res
+                except Exception as err:  # noqa: BLE001 - retry or try the next provider
+                    last_error = err
+                    self.metrics.record(name, Usage(), now_ms() - started, False)
+                    retryable = isinstance(err, ProviderError) and err.retryable
+                    if not retryable or attempt == self.retry.max_retries:
+                        self.logger.warn("model call failed, trying next provider", provider=name, error=str(err))
+                        break
+                    delay = min(self.retry.max_delay, self.retry.base_delay * (2 ** attempt))
+                    self.logger.info("retrying model call", provider=name, attempt=attempt + 1, delay_s=delay)
+                    time.sleep(delay / 2 + random.random() * delay / 2)
         assert last_error is not None
         raise last_error
