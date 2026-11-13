@@ -1,0 +1,16 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ai-native-common"
+version = "0.1.0"
+description = "Reusable AI platform building blocks: model providers, router, agent runtime, tools, guardrails, audit log."
+readme = "README.md"
+requires-python = ">=3.9"
+license = { text = "MIT" }
+authors = [{ name = "gauravgupta0612" }]
+dependencies = []  # standard library only
+
+[tool.setuptools.packages.find]
+where = ["src"]

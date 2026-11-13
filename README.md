@@ -24,6 +24,10 @@ Reusable project skeleton based on the "NextGen AI IDE" architecture.
 Developer → `apps/desktop-ide` → `core/` → `ai-orchestration/`
 (model-router → `model-providers/`, context-manager → `knowledge-data/`, guardrails → `security/`)
 
+## Common library (TypeScript · Java · Python)
+
+`common/` contains reusable code for any project: model providers (OpenAI, Claude, Gemini, Ollama, custom), a model router with fallback, a context manager, a tool registry, an agent runtime, guardrails, an audit log and metrics. The same design is available in all three languages. See `common/README.md`.
+
 ## Shared folders
 
 - `config/` – settings (`.env.example`, never real keys)
