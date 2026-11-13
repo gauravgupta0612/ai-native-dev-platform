@@ -1,4 +1,4 @@
-"""ai_native_common — reusable AI platform building blocks (stdlib only, Python 3.9+)."""
+"""ai_native_common — reusable AI platform building blocks (stdlib only, Python 3.10+)."""
 from .agent import AgentResult, AgentRuntime
 from .audit import AuditEvent, AuditLog
 from .config import PlatformConfig, load_config, load_dotenv

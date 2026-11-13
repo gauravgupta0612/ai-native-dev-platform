@@ -10,7 +10,7 @@ Multi-model routing, autonomous agents, code intelligence and enterprise control
 ![Node](https://img.shields.io/badge/Node.js-22%2B-339933?logo=node.js&logoColor=white)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript&logoColor=white)
 ![Java](https://img.shields.io/badge/Java-17%2B-ED8B00?logo=openjdk&logoColor=white)
-![Python](https://img.shields.io/badge/Python-3.9%2B-3776AB?logo=python&logoColor=white)
+![Python](https://img.shields.io/badge/Python-3.10%2B-3776AB?logo=python&logoColor=white)
 ![Runtime deps](https://img.shields.io/badge/runtime%20dependencies-0-brightgreen)
 ![License](https://img.shields.io/badge/license-MIT-blue)
 [![CI](https://github.com/gauravgupta0612/ai-native-dev-platform/actions/workflows/ci.yml/badge.svg)](https://github.com/gauravgupta0612/ai-native-dev-platform/actions/workflows/ci.yml)
@@ -143,7 +143,7 @@ console.log(run.outputs.review);
 |---|---|
 | **npm** (TypeScript / JavaScript) | `npm install @gauravgupta0612/ai-native-common` |
 | **Maven / Gradle** (Java 17+) via [JitPack](https://jitpack.io/#gauravgupta0612/ai-native-dev-platform) | `com.github.gauravgupta0612:ai-native-common:v0.2.0` with the repository `https://jitpack.io` |
-| **pip** (Python 3.9+) | `pip install "git+https://github.com/gauravgupta0612/ai-native-dev-platform.git@v0.2.0#subdirectory=common/python"` |
+| **pip** (Python 3.10+) | `pip install "git+https://github.com/gauravgupta0612/ai-native-dev-platform.git@v0.2.0#subdirectory=common/python"` |
 
 Full instructions, including Maven XML, Gradle and `requirements.txt`, are in [common/README.md](common/README.md#install-it-in-your-own-project).
 

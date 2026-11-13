@@ -2,7 +2,7 @@
 
 These are secure, reusable building blocks for any project that talks to AI models. The same design is provided in **TypeScript, Java and Python**, with the same class names and behavior, so each team can use the language it already works in.
 
-- **No runtime dependencies.** TypeScript needs Node 22+ (built-in `fetch`). Java needs Java 17+ (`java.net.http` and its own small JSON helper). Python needs 3.9+ and uses only the standard library.
+- **No runtime dependencies.** TypeScript needs Node 22+ (built-in `fetch`). Java needs Java 17+ (`java.net.http` and its own small JSON helper). Python needs 3.10+ and uses only the standard library.
 - **Works offline.** Without API keys the router uses the built-in `echo` provider, so your app, tests and CI run anywhere.
 - **Secure by default.** HTTPS only, secret masking everywhere, sandboxed file tools, tool approval, prompt-injection flagging and a tamper-evident audit log. See [SECURITY.md](SECURITY.md).
 
@@ -114,7 +114,7 @@ pip install "git+https://github.com/gauravgupta0612/ai-native-dev-platform.git@v
 from ai_native_common import create_router, load_config, AgentRuntime
 ```
 
-It needs Python 3.9 or newer, with no dependencies. In `requirements.txt`: `ai-native-common @ git+https://github.com/gauravgupta0612/ai-native-dev-platform.git@v0.2.0#subdirectory=common/python`
+It needs Python 3.10 or newer, with no dependencies. In `requirements.txt`: `ai-native-common @ git+https://github.com/gauravgupta0612/ai-native-dev-platform.git@v0.2.0#subdirectory=common/python`
 
 ### Without a package manager
 

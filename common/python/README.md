@@ -1,6 +1,6 @@
 # ai-native-common for Python
 
-Requires **Python 3.9+** and uses only the standard library.
+Requires **Python 3.10+** and uses only the standard library.
 
 ## 1. Add it to your project
 
