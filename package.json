@@ -1,0 +1,24 @@
+{
+  "name": "ai-native-dev-platform",
+  "version": "0.1.0",
+  "description": "Secure, extensible AI-native developer platform: multi-model router, agents, tools, knowledge layer, enterprise controls.",
+  "license": "MIT",
+  "author": "gauravgupta0612",
+  "private": true,
+  "main": "dist/apps/desktop-ide/index.js",
+  "bin": { "ai-platform": "dist/apps/desktop-ide/cli.js" },
+  "engines": { "node": ">=22" },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "test": "npm run build && node --test \"dist/tests/**/*.test.js\"",
+    "start": "npm run build && node dist/apps/desktop-ide/cli.js",
+    "serve": "npm run build && node dist/apps/desktop-ide/server.js",
+    "scan-secrets": "npm run build && node dist/scripts/scan-secrets.js",
+    "hash-key": "npm run build && node dist/scripts/hash-key.js",
+    "clean": "node -e \"require('fs').rmSync('dist',{recursive:true,force:true})\""
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "typescript": "^5.6.0"
+  }
+}

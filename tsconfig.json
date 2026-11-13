@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "commonjs",
+    "lib": ["ES2022", "DOM"],
+    "outDir": "dist",
+    "rootDir": ".",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "sourceMap": true,
+    "types": ["node"]
+  },
+  "include": [
+    "apps", "core", "ai-orchestration", "model-providers", "knowledge-data", "security",
+    "ecosystem", "features", "deployment", "enterprise", "scripts", "tests",
+    "common/typescript/src"
+  ],
+  "exclude": ["node_modules", "dist", "ecosystem/extensions/**/*.js"]
+}

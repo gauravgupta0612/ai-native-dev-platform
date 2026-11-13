@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- MSIX manifest template for Microsoft Store submission.
+     Replace Publisher with the value from Partner Center, then package with:
+     makeappx pack /d <app folder> /p AINativePlatform.msix  and sign with signtool. -->
+<Package xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10"
+         xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10"
+         xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities"
+         IgnorableNamespaces="uap rescap">
+  <Identity Name="AINativeDeveloperPlatform" Publisher="CN=REPLACE-WITH-PARTNER-CENTER-ID" Version="0.1.0.0" ProcessorArchitecture="x64" />
+  <Properties>
+    <DisplayName>AI-Native Developer Platform</DisplayName>
+    <PublisherDisplayName>gauravgupta0612</PublisherDisplayName>
+    <Logo>assets\StoreLogo.png</Logo>
+  </Properties>
+  <Dependencies>
+    <TargetDeviceFamily Name="Windows.Desktop" MinVersion="10.0.19041.0" MaxVersionTested="10.0.22631.0" />
+  </Dependencies>
+  <Resources><Resource Language="en-us" /></Resources>
+  <Applications>
+    <Application Id="AIPlatform" Executable="ai-platform.cmd" EntryPoint="Windows.FullTrustApplication">
+      <uap:VisualElements DisplayName="AI-Native Developer Platform" Description="Secure AI-native developer platform"
+                          BackgroundColor="transparent" Square150x150Logo="assets\Square150x150Logo.png" Square44x44Logo="assets\Square44x44Logo.png" />
+    </Application>
+  </Applications>
+  <Capabilities>
+    <Capability Name="internetClient" />
+    <rescap:Capability Name="runFullTrust" />
+  </Capabilities>
+</Package>

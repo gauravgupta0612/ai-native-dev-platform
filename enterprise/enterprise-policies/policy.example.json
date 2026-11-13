@@ -1,0 +1,14 @@
+{
+  "allowedProviders": ["anthropic", "openai", "ollama"],
+  "localOnly": false,
+  "deniedTools": ["github_list_issues"],
+  "blockedPatterns": ["drop\\s+table", "rm\\s+-rf\\s+/"],
+  "extraSecretPatterns": ["ARCAD-[A-Z0-9]{20,}"],
+  "maskEmails": true,
+  "maxAgentSteps": 12,
+  "maxTokensPerRun": 150000,
+  "allowFileWrites": true,
+  "allowedCommands": ["git", "npm", "mvn"],
+  "trustedPublishers": ["arcad"],
+  "telemetry": false
+}

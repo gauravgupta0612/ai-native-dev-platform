@@ -1,0 +1,16 @@
+{
+  "servers": {
+    "filesystem": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-filesystem", "./"],
+      "requireApproval": true
+    },
+    "arcad": {
+      "command": "node",
+      "args": ["path/to/arcad-mcp/index.js"],
+      "env": { "ARCAD_HOST": "your-ibmi-host" },
+      "allowedTools": ["componentSearch", "retrieveComponentSourceCode"],
+      "requireApproval": false
+    }
+  }
+}

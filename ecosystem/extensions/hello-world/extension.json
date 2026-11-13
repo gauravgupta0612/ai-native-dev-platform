@@ -1,0 +1,14 @@
+{
+  "id": "samples.hello-world",
+  "name": "Hello World",
+  "version": "1.0.0",
+  "publisher": "samples",
+  "description": "Sample extension: a command and an AI tool that counts lines in a file.",
+  "main": "main.js",
+  "engine": "^1.0.0",
+  "permissions": ["workspace:read"],
+  "contributes": {
+    "commands": [{ "id": "sayHello", "title": "Say Hello" }],
+    "tools": ["count_lines"]
+  }
+}

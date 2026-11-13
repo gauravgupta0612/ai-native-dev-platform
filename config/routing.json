@@ -1,0 +1,12 @@
+{
+  "providers": ["anthropic", "openai", "gemini", "ollama", "echo"],
+  "default": "anthropic",
+  "rules": {
+    "code-generation": { "provider": "anthropic" },
+    "code-review": { "provider": "anthropic" },
+    "summarize": { "provider": "openai" },
+    "quick-answer": { "provider": "openai" }
+  },
+  "localOnly": false,
+  "retry": { "maxRetries": 2, "baseDelayMs": 500, "maxDelayMs": 8000 }
+}

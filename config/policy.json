@@ -1,0 +1,9 @@
+{
+  "maskEmails": true,
+  "maxAgentSteps": 16,
+  "maxTokensPerRun": 200000,
+  "allowFileWrites": true,
+  "allowedCommands": ["git", "npm", "mvn", "gradle", "python", "node"],
+  "blockedPatterns": ["drop\\s+table", "rm\\s+-rf\\s+/"],
+  "telemetry": false
+}
