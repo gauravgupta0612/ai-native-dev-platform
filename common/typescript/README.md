@@ -1,20 +1,20 @@
-# @ai-native/common for TypeScript
+# @gauravgupta0612/ai-native-common for TypeScript
 
 Requires **Node 22+**. There are no runtime dependencies; TypeScript and `@types/node` are needed only to build.
 
 ## 1. Add it to your project
 
 ```bash
-# Option A: install from this folder
-cd common/typescript && npm install && npm run build
-cd /path/to/your-project && npm install /path/to/common/typescript
-
-# Option B: copy common/typescript/src into your project (e.g. src/ai-common) and import from there
+npm install @gauravgupta0612/ai-native-common
 ```
 
+Other options: install a local build with `npm install /path/to/common/typescript`, or copy `src/` into your project.
+
+To work on the library itself:
+
 ```bash
-npm test          # builds and runs the 19 offline tests
-npm run example   # runs examples/basic-agent.ts
+npm install && npm test     # builds and runs the 19 offline tests
+npm run example             # runs examples/basic-agent.ts
 ```
 
 ## 2. Configure keys (`.env` in your project root, never commit it)
@@ -27,7 +27,7 @@ AUDIT_LOG_PATH=logs/audit.jsonl
 ```
 
 ```ts
-import { loadDotEnv, loadConfig, redactConfig, createRouter } from "@ai-native/common";
+import { loadDotEnv, loadConfig, redactConfig, createRouter } from "@gauravgupta0612/ai-native-common";
 
 loadDotEnv();                                   // reads .env (real env vars win)
 const config = loadConfig();
@@ -66,7 +66,7 @@ You can set the retry policy yourself: `new ModelRouter(logger, metrics, { maxRe
 ## 5. An agent with your own tools
 
 ```ts
-import { AgentRuntime, ToolRegistry, PolicyGuardrails, AuditLog } from "@ai-native/common";
+import { AgentRuntime, ToolRegistry, PolicyGuardrails, AuditLog } from "@gauravgupta0612/ai-native-common";
 
 const tools = new ToolRegistry({ timeoutMs: 15_000, maxOutputChars: 20_000 }).register({
   spec: {
@@ -100,7 +100,7 @@ console.log(result.output, result.stoppedReason); // completed | max-steps | bud
 ## 6. Safe file access (workspace tools + approval)
 
 ```ts
-import { createWorkspaceTools } from "@ai-native/common";
+import { createWorkspaceTools } from "@gauravgupta0612/ai-native-common";
 
 const tools = new ToolRegistry().registerAll(
   createWorkspaceTools("/path/to/repo", { allowWrite: true }), // read_file, list_files, search_text, write_file
@@ -118,7 +118,7 @@ The agent cannot leave `/path/to/repo` (`../`, absolute paths and symlinks are b
 ## 7. Add context (open files, RAG results)
 
 ```ts
-import { ContextManager } from "@ai-native/common";
+import { ContextManager } from "@gauravgupta0612/ai-native-common";
 
 const ctx = new ContextManager("You are an IBM i expert.", 48_000);
 ctx.addSnippet({ source: "src/ORDERS.rpgle", text: fileText });
@@ -134,7 +134,7 @@ const ok = AuditLog.verifyFile("logs/audit.jsonl"); // -1 = intact, otherwise th
 ## 9. Add your own provider
 
 ```ts
-import { ModelProvider, ChatRequest, ChatResponse } from "@ai-native/common";
+import { ModelProvider, ChatRequest, ChatResponse } from "@gauravgupta0612/ai-native-common";
 
 class MyGatewayProvider implements ModelProvider {
   readonly name = "my-gateway";

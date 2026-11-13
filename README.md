@@ -13,6 +13,9 @@ Multi-model routing, autonomous agents, code intelligence and enterprise control
 ![Python](https://img.shields.io/badge/Python-3.9%2B-3776AB?logo=python&logoColor=white)
 ![Runtime deps](https://img.shields.io/badge/runtime%20dependencies-0-brightgreen)
 ![License](https://img.shields.io/badge/license-MIT-blue)
+[![CI](https://github.com/gauravgupta0612/ai-native-dev-platform/actions/workflows/ci.yml/badge.svg)](https://github.com/gauravgupta0612/ai-native-dev-platform/actions/workflows/ci.yml)
+[![npm](https://img.shields.io/npm/v/@gauravgupta0612/ai-native-common)](https://www.npmjs.com/package/@gauravgupta0612/ai-native-common)
+[![JitPack](https://jitpack.io/v/gauravgupta0612/ai-native-dev-platform.svg)](https://jitpack.io/#gauravgupta0612/ai-native-dev-platform)
 
 <img src="docs/architecture/architecture-overview.png" alt="AI-Native Developer Platform architecture" width="900">
 
@@ -134,15 +137,25 @@ const run = await new WorkflowEngine(platform.agents).run(WORKFLOWS["plan-implem
 console.log(run.outputs.review);
 ```
 
+### Install the shared library from a package manager
+
+| Ecosystem | Install |
+|---|---|
+| **npm** (TypeScript / JavaScript) | `npm install @gauravgupta0612/ai-native-common` |
+| **Maven / Gradle** (Java 17+) via [JitPack](https://jitpack.io/#gauravgupta0612/ai-native-dev-platform) | `com.github.gauravgupta0612:ai-native-common:v0.2.0` with the repository `https://jitpack.io` |
+| **pip** (Python 3.9+) | `pip install "git+https://github.com/gauravgupta0612/ai-native-dev-platform.git@v0.2.0#subdirectory=common/python"` |
+
+Full instructions, including Maven XML, Gradle and `requirements.txt`, are in [common/README.md](common/README.md#install-it-in-your-own-project).
+
 ### Only the shared library: TypeScript, Python or Java
 
-`common/` works on its own in any project. Copy it in or install it as a package.
+`common/` works on its own in any project. Install it with npm, Maven/Gradle or pip as shown above.
 
 <details>
 <summary><b>TypeScript</b></summary>
 
 ```ts
-import { AgentRuntime, ToolRegistry, createRouter, createWorkspaceTools, loadConfig, loadDotEnv } from "./common/typescript/src";
+import { AgentRuntime, ToolRegistry, createRouter, createWorkspaceTools, loadConfig, loadDotEnv } from "@gauravgupta0612/ai-native-common";
 
 loadDotEnv();
 const router = createRouter(loadConfig());

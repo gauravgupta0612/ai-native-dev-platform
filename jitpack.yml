@@ -1,0 +1,7 @@
+# JitPack builds the Java library straight from this GitHub repository.
+# Users add https://jitpack.io as a repository and depend on
+#   com.github.gauravgupta0612:ai-native-common:<git tag, e.g. v0.2.0>
+jdk:
+  - openjdk17
+install:
+  - cd common/java && mvn -B -q install -DskipTests

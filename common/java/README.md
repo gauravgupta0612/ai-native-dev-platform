@@ -4,23 +4,44 @@ Requires **Java 17+**. There are no runtime dependencies: it uses `java.net.http
 
 ## 1. Add it to your project
 
-```bash
-cd common/java
-mvn test            # 21 offline tests
-mvn install         # puts com.ainative:ai-native-common:0.2.0 in your local Maven repo
-mvn -q compile exec:java   # runs BasicAgentExample
-```
+The library is served by **JitPack**, which builds it straight from GitHub; no account or token is needed. Use a release tag as the version.
+
+**Maven**
 
 ```xml
-<!-- your project's pom.xml -->
-<dependency>
-  <groupId>com.ainative</groupId>
-  <artifactId>ai-native-common</artifactId>
-  <version>0.2.0</version>
-</dependency>
+<repositories>
+  <repository>
+    <id>jitpack.io</id>
+    <url>https://jitpack.io</url>
+  </repository>
+</repositories>
+
+<dependencies>
+  <dependency>
+    <groupId>com.github.gauravgupta0612</groupId>
+    <artifactId>ai-native-common</artifactId>
+    <version>v0.2.0</version>
+  </dependency>
+</dependencies>
 ```
 
-Or copy `src/main/java/com/ainative` into your source tree. Gradle users: `implementation("com.ainative:ai-native-common:0.2.0")` with `mavenLocal()`.
+**Gradle (Kotlin DSL)**
+
+```kotlin
+repositories { mavenCentral(); maven("https://jitpack.io") }
+dependencies { implementation("com.github.gauravgupta0612:ai-native-common:v0.2.0") }
+```
+
+The first time someone requests a new tag, JitPack builds it, which takes a minute. The build log is at `https://jitpack.io/#gauravgupta0612/ai-native-dev-platform`.
+
+Other options: run `mvn install` in this folder to use `com.github.gauravgupta0612:ai-native-common:0.2.0` from your local Maven repository, or copy `src/main/java/com/ainative` into your project.
+
+To work on the library itself:
+
+```bash
+mvn test                   # 21 offline tests
+mvn -q compile exec:java   # runs BasicAgentExample
+```
 
 ## 2. Configure keys (`.env` in the working folder or environment variables; never commit them)
 

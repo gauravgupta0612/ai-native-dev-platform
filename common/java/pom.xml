@@ -4,12 +4,34 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>com.ainative</groupId>
+  <!-- groupId follows JitPack's convention so the library can be used straight from GitHub:
+       com.github.gauravgupta0612:ai-native-common:<git tag> -->
+  <groupId>com.github.gauravgupta0612</groupId>
   <artifactId>ai-native-common</artifactId>
   <version>0.2.0</version>
   <packaging>jar</packaging>
   <name>AI-Native Common (Java)</name>
-  <description>Reusable AI platform building blocks: model providers, router, agent runtime, tools, guardrails, audit log. No runtime dependencies.</description>
+  <description>Secure, zero-dependency building blocks for AI apps: multi-model router, agent runtime, validated tools, sandboxed file tools, guardrails and a tamper-evident audit log.</description>
+  <url>https://github.com/gauravgupta0612/ai-native-dev-platform</url>
+
+  <licenses>
+    <license>
+      <name>MIT License</name>
+      <url>https://opensource.org/licenses/MIT</url>
+    </license>
+  </licenses>
+
+  <developers>
+    <developer>
+      <id>gauravgupta0612</id>
+      <url>https://github.com/gauravgupta0612</url>
+    </developer>
+  </developers>
+
+  <scm>
+    <url>https://github.com/gauravgupta0612/ai-native-dev-platform</url>
+    <connection>scm:git:https://github.com/gauravgupta0612/ai-native-dev-platform.git</connection>
+  </scm>
 
   <properties>
     <maven.compiler.release>17</maven.compiler.release>
@@ -38,6 +60,33 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
         <version>3.5.2</version>
+      </plugin>
+      <plugin>
+        <!-- publishes a -sources.jar so IDEs show the code and docs -->
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-source-plugin</artifactId>
+        <version>3.3.1</version>
+        <executions>
+          <execution>
+            <id>attach-sources</id>
+            <goals><goal>jar-no-fork</goal></goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <version>3.4.2</version>
+        <configuration>
+          <excludes>
+            <exclude>com/ainative/common/examples/**</exclude>
+          </excludes>
+          <archive>
+            <manifestEntries>
+              <Automatic-Module-Name>com.ainative.common</Automatic-Module-Name>
+            </manifestEntries>
+          </archive>
+        </configuration>
       </plugin>
       <plugin>
         <groupId>org.codehaus.mojo</groupId>

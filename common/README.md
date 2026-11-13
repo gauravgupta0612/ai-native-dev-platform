@@ -8,9 +8,9 @@ These are secure, reusable building blocks for any project that talks to AI mode
 
 | Language | Guide | Package |
 |---|---|---|
-| TypeScript | [typescript/README.md](typescript/README.md) | `@ai-native/common` |
-| Python | [python/README.md](python/README.md) | `ai-native-common` (import `ai_native_common`) |
-| Java | [java/README.md](java/README.md) | `com.ainative:ai-native-common` |
+| TypeScript | [typescript/README.md](typescript/README.md) | `@gauravgupta0612/ai-native-common` (npm) |
+| Python | [python/README.md](python/README.md) | `ai-native-common` via pip from GitHub (import `ai_native_common`) |
+| Java | [java/README.md](java/README.md) | `com.github.gauravgupta0612:ai-native-common` (JitPack) |
 
 ---
 
@@ -60,13 +60,73 @@ your app ──► AgentRuntime ──► Guardrails (check input, mask secrets)
 
 Default model names change over time. Set the `*_MODEL` variables to the models your account uses.
 
-## Use it in your own project
+## Install it in your own project
 
-| Language | Option A: copy the source | Option B: install as a package |
-|---|---|---|
-| TypeScript | Copy `typescript/src` into your project | `npm install ../path/to/common/typescript` |
-| Python | Copy `python/src/ai_native_common` | `pip install -e path/to/common/python` |
-| Java | Copy `java/src/main/java/com/ainative` | `mvn install` here, then add the dependency (see the Java guide) |
+The same library is published for all three ecosystems, so any team can reuse it with its normal package manager.
+
+### TypeScript / JavaScript (npm)
+
+```bash
+npm install @gauravgupta0612/ai-native-common
+```
+
+```ts
+import { createRouter, loadConfig, AgentRuntime } from "@gauravgupta0612/ai-native-common";
+```
+
+This works with ESM (`import`) and CommonJS (`require`), and type definitions are included. It needs Node 22 or newer.
+
+### Java (Maven / Gradle via JitPack)
+
+JitPack builds the library straight from the GitHub repository. Add the repository once, then add the dependency, using a release tag as the version.
+
+```xml
+<repositories>
+  <repository>
+    <id>jitpack.io</id>
+    <url>https://jitpack.io</url>
+  </repository>
+</repositories>
+
+<dependency>
+  <groupId>com.github.gauravgupta0612</groupId>
+  <artifactId>ai-native-common</artifactId>
+  <version>v0.2.0</version>
+</dependency>
+```
+
+```kotlin
+// Gradle (settings.gradle.kts)
+dependencyResolutionManagement { repositories { mavenCentral(); maven("https://jitpack.io") } }
+// build.gradle.kts
+dependencies { implementation("com.github.gauravgupta0612:ai-native-common:v0.2.0") }
+```
+
+The Java package is `com.ainative.common`, and it needs Java 17 or newer.
+
+### Python (pip)
+
+```bash
+pip install "git+https://github.com/gauravgupta0612/ai-native-dev-platform.git@v0.2.0#subdirectory=common/python"
+```
+
+```python
+from ai_native_common import create_router, load_config, AgentRuntime
+```
+
+It needs Python 3.9 or newer, with no dependencies. In `requirements.txt`: `ai-native-common @ git+https://github.com/gauravgupta0612/ai-native-dev-platform.git@v0.2.0#subdirectory=common/python`
+
+### Without a package manager
+
+Copy `typescript/src`, `python/src/ai_native_common` or `java/src/main/java/com/ainative` into your project.
+
+## Releasing a new version (maintainers)
+
+1. Set the same version in `typescript/package.json`, `java/pom.xml` and `python/pyproject.toml`.
+2. Commit and push, then run `release.bat` (or `git tag v0.2.1 && git push origin v0.2.1`).
+3. GitHub Actions (`.github/workflows/release.yml`) publishes to npm, builds the Java library on JitPack, and creates a GitHub release with install instructions.
+
+One-time setup: create an npm access token (type "Automation") at npmjs.com, and add it in GitHub under **Settings → Secrets and variables → Actions** as `NPM_TOKEN`.
 
 ## Run the tests
 

@@ -11,6 +11,12 @@ requires-python = ">=3.9"
 license = { text = "MIT" }
 authors = [{ name = "gauravgupta0612" }]
 dependencies = []  # standard library only
+keywords = ["ai", "llm", "agent", "openai", "anthropic", "claude", "gemini", "ollama", "guardrails", "security"]
+
+[project.urls]
+Homepage = "https://github.com/gauravgupta0612/ai-native-dev-platform"
+Source = "https://github.com/gauravgupta0612/ai-native-dev-platform/tree/main/common/python"
+Issues = "https://github.com/gauravgupta0612/ai-native-dev-platform/issues"
 
 [tool.setuptools.packages.find]
 where = ["src"]

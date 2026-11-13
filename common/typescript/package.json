@@ -1,18 +1,37 @@
 {
-  "name": "@ai-native/common",
+  "name": "@gauravgupta0612/ai-native-common",
   "version": "0.2.0",
-  "description": "Reusable AI platform building blocks: model providers, router, agent runtime, tools, guardrails, audit log.",
+  "description": "Secure, zero-dependency building blocks for AI apps: multi-model router (OpenAI, Claude, Gemini, Ollama), agent runtime, validated tools, sandboxed file tools, guardrails and a tamper-evident audit log.",
   "license": "MIT",
   "author": "gauravgupta0612",
+  "homepage": "https://github.com/gauravgupta0612/ai-native-dev-platform/tree/main/common/typescript#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gauravgupta0612/ai-native-dev-platform.git",
+    "directory": "common/typescript"
+  },
+  "bugs": { "url": "https://github.com/gauravgupta0612/ai-native-dev-platform/issues" },
+  "keywords": ["ai", "llm", "agent", "openai", "anthropic", "claude", "gemini", "ollama", "router", "guardrails", "security", "mcp"],
   "main": "dist/src/index.js",
   "types": "dist/src/index.d.ts",
-  "files": ["dist/src"],
+  "exports": {
+    ".": {
+      "types": "./dist/src/index.d.ts",
+      "default": "./dist/src/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": ["dist/src", "README.md"],
   "engines": { "node": ">=22" },
+  "sideEffects": false,
+  "publishConfig": { "access": "public" },
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "test": "npm run build && node --test dist/test/*.test.js",
     "example": "npm run build && node dist/examples/basic-agent.js",
-    "clean": "node -e \"require('fs').rmSync('dist',{recursive:true,force:true})\""
+    "clean": "node -e \"require('fs').rmSync('dist',{recursive:true,force:true})\"",
+    "prepack": "npm run clean && npm run build",
+    "prepublishOnly": "npm test"
   },
   "devDependencies": {
     "@types/node": "^22.0.0",

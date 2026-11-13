@@ -5,11 +5,18 @@ Requires **Python 3.9+** and uses only the standard library.
 ## 1. Add it to your project
 
 ```bash
-# Option A: install (editable, so updates are picked up)
-pip install -e /path/to/common/python
-
-# Option B: copy common/python/src/ai_native_common into your project
+pip install "git+https://github.com/gauravgupta0612/ai-native-dev-platform.git@v0.2.0#subdirectory=common/python"
 ```
+
+In `requirements.txt`:
+
+```text
+ai-native-common @ git+https://github.com/gauravgupta0612/ai-native-dev-platform.git@v0.2.0#subdirectory=common/python
+```
+
+Other options: `pip install -e /path/to/common/python` for a local editable install, or copy `src/ai_native_common` into your project.
+
+To work on the library itself:
 
 ```bash
 python -m unittest discover -s tests     # 20 offline tests
