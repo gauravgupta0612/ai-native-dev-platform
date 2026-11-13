@@ -1,5 +1,5 @@
 # Runs when you push a version tag (e.g. v0.2.0):
-#  - publishes @gauravgupta0612/ai-native-common to npm (needs the NPM_TOKEN repository secret)
+#  - publishes @gauravgupta0612/ai-native-common to npm (trusted publishing, or the NPM_TOKEN secret)
 #  - warms up the JitPack build so the Java library is ready for users
 #  - creates a GitHub release with install instructions
 name: Release
@@ -29,7 +29,11 @@ jobs:
         run: |
           PKG="v$(node -p "require('./package.json').version")"
           [ "$PKG" = "${GITHUB_REF_NAME}" ] || { echo "Tag ${GITHUB_REF_NAME} does not match package.json version $PKG"; exit 1; }
+      - name: Use a recent npm (trusted publishing needs npm 11.5.1 or newer)
+        run: npm install -g npm@latest
       - run: npm install --no-audit --no-fund
+      # Uses npm trusted publishing (no token) when it is configured on npmjs.com,
+      # otherwise the NPM_TOKEN secret (a granular access token).
       - run: npm publish --provenance --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
