@@ -1,0 +1,3 @@
+# Openai
+
+OpenAI (ChatGPT) adapter.

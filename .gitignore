@@ -1,0 +1,10 @@
+.env
+*.db
+node_modules/
+dist/
+build/
+__pycache__/
+.vscode/
+logs/
+push-to-github.bat
+fix-author-and-push.bat
